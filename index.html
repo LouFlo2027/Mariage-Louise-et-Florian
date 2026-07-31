@@ -60,12 +60,14 @@
     position: relative;
     z-index: 1;
     height: 100vh;
+    height: 100svh;
     overflow-y: scroll;
     scroll-snap-type: y mandatory;
   }
 
   section{
     height: 100vh;
+    height: 100svh;
     scroll-snap-align: start;
     display:flex;
     align-items:center;
@@ -127,6 +129,10 @@
   @keyframes bounce{
     0%,100%{ transform: translate(-50%, 0); }
     50%{ transform: translate(-50%, 8px); }
+  }
+
+  @media (max-width: 480px){
+    .scroll-hint{ bottom: 18px; }
   }
 
   .glass{
@@ -197,7 +203,7 @@
   <section id="s1">
     <div class="panel">
       <h1 class="names reveal in-view">Louise <em>&amp;</em> Florian</h1>
-      <p class="subtitle reveal in-view delay-1">vous invite à leur mariage</p>
+      <p class="subtitle reveal in-view delay-1">vous invitent à leur mariage</p>
     </div>
     <div class="scroll-hint">Faites défiler ↓</div>
   </section>
