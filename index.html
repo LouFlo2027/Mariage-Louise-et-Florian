@@ -38,7 +38,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 140%;
+    height: 165%;
     object-fit: cover;
     object-position: top center;
     will-change: transform;
@@ -231,7 +231,7 @@
   const bgImg = document.getElementById('bg-img');
   const scroller = document.getElementById('scroller');
   scroller.addEventListener('scroll', () => {
-    const shift = scroller.scrollTop * 0.18;
+    const shift = scroller.scrollTop * 0.13;
     bgImg.style.transform = `translateY(-${shift}px)`;
   });
 
