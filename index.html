@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Louise & Florian — Prenez date</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sable: #F1E6D0;
+    --encre: #1E2A22;
+    --lagune: #1C7A8C;
+    --acajou: #C9673A;
+    --cocotier: #6E8F5A;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+  body{
+    font-family:"Work Sans", sans-serif;
+    color: var(--sable);
+    background: #16211B;
+  }
+
+  /* ---- fond image fixe, parallax géré en JS ---- */
+  #bg-wrap{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+  }
+  #bg-img{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 140%;
+    object-fit: cover;
+    object-position: top center;
+    will-change: transform;
+  }
+  /* voile sombre pour la lisibilité du texte, plus marqué en haut/bas */
+  #bg-overlay{
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(20,28,22,0.42) 0%,
+      rgba(20,28,22,0.12) 20%,
+      rgba(20,28,22,0.12) 80%,
+      rgba(20,28,22,0.5) 100%
+    );
+  }
+
+  .snap-container{
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+  }
+
+  section{
+    height: 100vh;
+    scroll-snap-align: start;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding: 40px;
+    position: relative;
+  }
+
+  .panel{ max-width: 520px; }
+
+  .reveal{
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.in-view{ opacity: 1; transform: translateY(0); }
+  .reveal.delay-1{ transition-delay: 0.15s; }
+  .reveal.delay-2{ transition-delay: 0.3s; }
+
+  /* ---- écran 1 : accueil ---- */
+  #s1 .names{
+    font-family:"Fraunces", serif;
+    font-weight: 500;
+    font-size: clamp(46px, 10vw, 84px);
+    line-height: 1.02;
+    color: #FFFDF7;
+    margin-bottom: 16px;
+    text-shadow: 0 4px 28px rgba(0,0,0,0.35);
+  }
+  #s1 .names em{
+    font-style: italic;
+    font-weight: 400;
+    color: #EADFBF;
+    font-size: 0.68em;
+    padding: 0 8px;
+  }
+  #s1 .subtitle{
+    font-family:"Work Sans", sans-serif;
+    font-weight: 500;
+    font-size: clamp(13px, 2.2vw, 16px);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #FFFDF7;
+    text-shadow: 0 2px 14px rgba(0,0,0,0.4);
+  }
+  .scroll-hint{
+    position:absolute;
+    bottom: 34px;
+    left:50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #FFFDF7;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce{
+    0%,100%{ transform: translate(-50%, 0); }
+    50%{ transform: translate(-50%, 8px); }
+  }
+
+  .glass{
+    background: rgba(30,42,34,0.55);
+    backdrop-filter: blur(8px);
+    border-radius: 18px;
+    padding: 38px 32px;
+  }
+
+  /* ---- écran 2 : date ---- */
+  #s2 .date-big{
+    font-family:"Fraunces", serif;
+    font-weight: 600;
+    font-size: clamp(34px, 8vw, 68px);
+    letter-spacing: 0.01em;
+    color: #FFFDF7;
+    margin-bottom: 14px;
+  }
+  #s2 .subtitle{
+    font-family:"Fraunces", serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(18px, 3.4vw, 24px);
+    color: #E8A57C;
+  }
+
+  /* ---- écran 3 : lieu ---- */
+  #s3 .kicker{
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #A9C48F;
+    margin-bottom: 18px;
+  }
+  #s3 .venue{
+    font-family:"Fraunces", serif;
+    font-style: italic;
+    font-size: clamp(28px, 6vw, 42px);
+    color: #FFFDF7;
+    margin-bottom: 8px;
+  }
+  #s3 .venue-sub{
+    font-size: 15px;
+    color: #E7DFC9;
+  }
+
+  /* ---- écran 4 : teaser ---- */
+  #s4 .teaser{
+    font-family:"Fraunces", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(19px, 3.6vw, 25px);
+    line-height: 1.5;
+    color: #FFFDF7;
+  }
+</style>
+</head>
+<body>
+
+<div id="bg-wrap">
+  <img id="bg-img" src="grand-popo-illustration.jpg" alt="Illustration Grand Popo — lagune, mangroves, pirogue">
+  <div id="bg-overlay"></div>
+</div>
+
+<div class="snap-container" id="scroller">
+
+  <section id="s1">
+    <div class="panel">
+      <h1 class="names reveal in-view">Louise <em>&amp;</em> Florian</h1>
+      <p class="subtitle reveal in-view delay-1">vous invite à leur mariage</p>
+    </div>
+    <div class="scroll-hint">Faites défiler ↓</div>
+  </section>
+
+  <section id="s2">
+    <div class="panel glass">
+      <p class="date-big reveal">17 juillet 2027</p>
+      <p class="subtitle reveal delay-1">Prenez date</p>
+    </div>
+    <div class="scroll-hint">Faites défiler ↓</div>
+  </section>
+
+  <section id="s3">
+    <div class="panel glass">
+      <p class="kicker reveal">Le lieu</p>
+      <p class="venue reveal delay-1">Domaine des 4S</p>
+      <p class="venue-sub reveal delay-2">La Ville-aux-Clercs — Centre-Val de Loire, France</p>
+    </div>
+    <div class="scroll-hint">Faites défiler ↓</div>
+  </section>
+
+  <section id="s4">
+    <div class="panel glass">
+      <p class="teaser reveal">Informations pratiques et RSVP seront ajoutés ici prochainement.</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const bgImg = document.getElementById('bg-img');
+  const scroller = document.getElementById('scroller');
+  scroller.addEventListener('scroll', () => {
+    const shift = scroller.scrollTop * 0.18;
+    bgImg.style.transform = `translateY(-${shift}px)`;
+  });
+
+  const revealEls = document.querySelectorAll('.reveal:not(.in-view)');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add('in-view');
+      }
+    });
+  }, { root: scroller, threshold: 0.35 });
+  revealEls.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
